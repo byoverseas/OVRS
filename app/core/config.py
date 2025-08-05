@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     redis_url: str = 'redis://redis:6379/0'
     celery_broker_url: str = 'redis://redis:6379/0'
     celery_result_backend: str = 'redis://redis:6379/0'
+    n8n_webhook_token: str | None = None
 
     model_config = SettingsConfigDict(env_file=str(ENV_FILE), case_sensitive=False)
 

@@ -3,9 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.core.config import settings
-from app.core.database import Base, engine
+from app.core.database import AsyncSessionLocal, Base, engine
 from app.core.logger import logger
-from app.routes import analytics, auth, listening, tasks
+from app.routes import analytics, auth, listening, tasks, teams, export, integrations
+from app import models
 
 app = FastAPI(title="Secure FastAPI Skeleton")
 
@@ -23,6 +24,15 @@ app.add_middleware(
 async def on_startup():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    async with AsyncSessionLocal() as session:
+        from sqlalchemy import select
+        from app.models.role import Role
+
+        for name in ["admin", "editor", "viewer"]:
+            result = await session.execute(select(Role).where(Role.name == name))
+            if not result.scalar_one_or_none():
+                session.add(Role(name=name))
+        await session.commit()
     logger.info("startup complete", env=settings.env)
 
 
@@ -30,6 +40,9 @@ app.include_router(auth.router)
 app.include_router(tasks.router)
 app.include_router(analytics.router)
 app.include_router(listening.router)
+app.include_router(teams.router)
+app.include_router(export.router)
+app.include_router(integrations.router)
 
 
 @app.exception_handler(HTTPException)

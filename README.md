@@ -20,6 +20,8 @@ Secure FastAPI backend skeleton demonstrating JWT authentication, bcrypt passwor
 - **Background tasks**: POST to `/tasks/log` with a `message` body to see a background logger task.
 - **Structured logging**: loguru outputs JSON logs with rotation configured via env vars.
 - **Dockerized**: `docker-compose up --build` launches the API along with Postgres and Redis.
+- **Roles & Teams**: users belong to companies/teams with admin/editor/viewer roles enforced via RBAC middleware.
+- **Export & Integrations**: admins can pull analytics exports in CSV/JSON or connect to n8n workflows through a secured webhook.
 
 ## Analytics & Social Listening
 
@@ -100,3 +102,7 @@ import { fetchWithToken } from '@/services/api'
 const token = localStorage.getItem('token') || ''
 const funnel = await fetchWithToken(token, '/analytics/funnel')
 ```
+
+## Developer Docs
+
+Full developer documentation covering setup, environment variables, API examples and troubleshooting lives in [`docs/DEV.md`](docs/DEV.md).

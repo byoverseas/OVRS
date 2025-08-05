@@ -11,3 +11,5 @@ celery
 redis
 pydantic-settings
 textblob
+pytest
+pytest-asyncio
