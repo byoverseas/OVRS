@@ -21,8 +21,36 @@ class Settings(BaseSettings):
     celery_broker_url: str = 'redis://redis:6379/0'
     celery_result_backend: str = 'redis://redis:6379/0'
     n8n_webhook_token: str | None = None
+    enable_logging: bool = True
+    enable_background_tasks: bool = True
+    default_export_format: str = 'csv'
+    negative_sentiment_threshold: int = 5
 
     model_config = SettingsConfigDict(env_file=str(ENV_FILE), case_sensitive=False)
 
 
 settings = Settings()
+
+
+async def reload_settings(session=None):
+    """Reload settings from environment and apply overrides from DB."""
+    global settings
+    settings = Settings()
+    if session:
+        from sqlalchemy import select
+        from sqlalchemy.ext.asyncio import AsyncSession
+        from app.models.system_settings import SystemSettings
+
+        assert isinstance(session, AsyncSession)
+        result = await session.execute(select(SystemSettings))
+        for row in result.scalars():
+            attr = row.key.lower()
+            if hasattr(settings, attr):
+                current = getattr(settings, attr)
+                if isinstance(current, bool):
+                    val = row.value.lower() == "true"
+                elif isinstance(current, int):
+                    val = int(row.value)
+                else:
+                    val = row.value
+                setattr(settings, attr, val)

@@ -2,10 +2,10 @@ from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.core.config import settings
+from app.core.config import settings, reload_settings
 from app.core.database import AsyncSessionLocal, Base, engine
 from app.core.logger import logger
-from app.routes import analytics, auth, listening, tasks, teams, export, integrations
+from app.routes import analytics, auth, listening, tasks, teams, export, integrations, op
 from app import models
 
 app = FastAPI(title="Secure FastAPI Skeleton")
@@ -33,6 +33,7 @@ async def on_startup():
             if not result.scalar_one_or_none():
                 session.add(Role(name=name))
         await session.commit()
+        await reload_settings(session)
     logger.info("startup complete", env=settings.env)
 
 
@@ -43,6 +44,7 @@ app.include_router(listening.router)
 app.include_router(teams.router)
 app.include_router(export.router)
 app.include_router(integrations.router)
+app.include_router(op.router)
 
 
 @app.exception_handler(HTTPException)

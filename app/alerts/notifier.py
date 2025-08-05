@@ -22,5 +22,5 @@ async def check_negative_sentiment(db: AsyncSession) -> None:
     )
     result = await db.execute(stmt)
     count = result.scalar_one()
-    if count >= 5:
+    if count >= settings.negative_sentiment_threshold:
         await publish_alert("High negative sentiment detected")

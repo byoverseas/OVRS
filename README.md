@@ -22,6 +22,7 @@ Secure FastAPI backend skeleton demonstrating JWT authentication, bcrypt passwor
 - **Dockerized**: `docker-compose up --build` launches the API along with Postgres and Redis.
 - **Roles & Teams**: users belong to companies/teams with admin/editor/viewer roles enforced via RBAC middleware.
 - **Export & Integrations**: admins can pull analytics exports in CSV/JSON or connect to n8n workflows through a secured webhook.
+- **Admin Settings**: admins manage runtime settings via `/op/settings`, persisted in the `SystemSettings` table and surfaced in the frontend control panel.
 
 ## Analytics & Social Listening
 

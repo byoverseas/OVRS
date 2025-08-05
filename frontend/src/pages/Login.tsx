@@ -13,6 +13,7 @@ export default function Login() {
     const res = await login(email, password)
     if (res.access_token) {
       localStorage.setItem('token', res.access_token)
+      if (res.role) localStorage.setItem('role', res.role)
       navigate('/dashboard')
     }
   }

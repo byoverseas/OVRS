@@ -24,4 +24,5 @@ async def login(user: UserLogin, db: AsyncSession = Depends(get_db)):
     if not db_user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_access_token(db_user.username)
-    return {"access_token": token, "token_type": "bearer"}
+    role = db_user.role.name if db_user.role else None
+    return {"access_token": token, "token_type": "bearer", "role": role}

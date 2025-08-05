@@ -1,4 +1,4 @@
-from . import analytics, auth, listening, tasks, teams, export, integrations
+from . import analytics, auth, listening, tasks, teams, export, integrations, op
 
 __all__ = [
     "auth",
@@ -8,4 +8,5 @@ __all__ = [
     "teams",
     "export",
     "integrations",
+    "op",
 ]
